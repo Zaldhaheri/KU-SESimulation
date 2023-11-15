@@ -1,10 +1,8 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
 public class gasStationSim extends JFrame {
 
-    //create private variables to use in different parts of the system
     private JPanel panel1, panel2, panel3;
     private JTabbedPane tabbedPane;
     private JButton carInButton, carOutButton, pump1Button, pump2Button, pump3Button, pump4Button, pump5Button, pump6Button, pump7Button, pump8Button;
@@ -16,11 +14,16 @@ public class gasStationSim extends JFrame {
         // Create a JTabbedPane
         tabbedPane = new JTabbedPane();
 
-        // Create the first tab and add a panel with some text and a button
-        panel1 = new JPanel();
-        panel1.setLayout(new GridLayout(5,10));
+        // Create the first tab and add a panel with some text and buttons
+        panel1 = new JPanel(new GridBagLayout()); // Use GridBagLayout
+        GridBagConstraints gbc = new GridBagConstraints();
+
         panel1.add(new JLabel("Gas Station Simulation"));
-        tabbedPane.addTab("Tab 1", panel1);
+
+        // Add empty space
+        //gbc.gridy = 1;
+        gbc.weighty = 1.0; // Vertical weight to fill the space
+        panel1.add(Box.createVerticalGlue(), gbc);
 
         carInButton = new JButton("Car In");
         carOutButton = new JButton("Car Out");
@@ -33,16 +36,23 @@ public class gasStationSim extends JFrame {
         pump7Button = new JButton("Pump 7");
         pump8Button = new JButton("Pump 8");
 
-        panel1.add(carInButton);
-        panel1.add(carOutButton);
-        panel1.add(pump1Button);
-        panel1.add(pump2Button);
-        panel1.add(pump3Button);
-        panel1.add(pump4Button);
-        panel1.add(pump5Button);
-        panel1.add(pump6Button);
-        panel1.add(pump7Button);
-        panel1.add(pump8Button);
+        gbc.gridy = 2;
+        gbc.weighty = 0.0; // Reset vertical weight
+
+        panel1.add(carInButton, gbc);
+
+        gbc.gridx = 1;
+        panel1.add(carOutButton, gbc);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel1.add(pump1Button, gbc);
+
+        gbc.gridx = 1;
+        panel1.add(pump2Button, gbc);
+
+        // Add the first tab to the tabbedPane
+        tabbedPane.addTab("Tab 1", panel1);
 
         // Create the second tab and add a panel with some text
         panel2 = new JPanel();
