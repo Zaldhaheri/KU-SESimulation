@@ -1,82 +1,59 @@
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
 
-public class gasStationSim extends JFrame {
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
-    private JPanel panel1, panel2, panel3;
-    private JTabbedPane tabbedPane;
-    private JButton carInButton, carOutButton, pump1Button, pump2Button, pump3Button, pump4Button, pump5Button, pump6Button, pump7Button, pump8Button;
-
-    public gasStationSim() {
-        // Set the title of the JFrame
-        super("GUI GSS");
-
-        // Create a JTabbedPane
-        tabbedPane = new JTabbedPane();
-
-        // Create the first tab and add a panel with some text and buttons
-        panel1 = new JPanel(new GridBagLayout()); // Use GridBagLayout
-        GridBagConstraints gbc = new GridBagConstraints();
-
-        panel1.add(new JLabel("Gas Station Simulation"));
-
-        // Add empty space
-        //gbc.gridy = 1;
-        gbc.weighty = 1.0; // Vertical weight to fill the space
-        panel1.add(Box.createVerticalGlue(), gbc);
-
-        carInButton = new JButton("Car In");
-        carOutButton = new JButton("Car Out");
-        pump1Button = new JButton("Pump 1");
-        pump2Button = new JButton("Pump 2");
-        pump3Button = new JButton("Pump 3");
-        pump4Button = new JButton("Pump 4");
-        pump5Button = new JButton("Pump 5");
-        pump6Button = new JButton("Pump 6");
-        pump7Button = new JButton("Pump 7");
-        pump8Button = new JButton("Pump 8");
-
-        gbc.gridy = 2;
-        gbc.weighty = 0.0; // Reset vertical weight
-
-        panel1.add(carInButton, gbc);
-
-        gbc.gridx = 1;
-        panel1.add(carOutButton, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy = 3;
-        panel1.add(pump1Button, gbc);
-
-        gbc.gridx = 1;
-        panel1.add(pump2Button, gbc);
-
-        // Add the first tab to the tabbedPane
-        tabbedPane.addTab("Tab 1", panel1);
-
-        // Create the second tab and add a panel with some text
-        panel2 = new JPanel();
-        panel2.add(new JLabel("Availability Monitor"));
-        tabbedPane.addTab("Tab 2", panel2);
-
-        // Create the third tab and add a panel with some text
-        panel3 = new JPanel();
-        panel3.add(new JLabel("Estimated Waiting Time Monitor"));
-        tabbedPane.addTab("Tab 3", panel3);
-
-        // Set default close operation and size of the JFrame
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 500);
-
-        // Add the tabbedPane to the JFrame
-        getContentPane().add(tabbedPane);
-
-        // Set the JFrame to be visible
-        setVisible(true);
+public final class JGradientButtonDemo {
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                createAndShowGUI();         
+            }
+        });
     }
 
-    public static void main(String[] args) {
-        // Run the GUI on the Event Dispatch Thread (EDT)
-        SwingUtilities.invokeLater(() -> new gasStationSim());
+    private static void createAndShowGUI() {
+        final JFrame frame = new JFrame("Gradient JButton Demo");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.getContentPane().setLayout(new FlowLayout());
+        frame.add(JGradientButton.newInstance());
+        frame.setSize(new Dimension(300, 150)); // used for demonstration
+        //frame.pack();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
+    private static class JGradientButton extends JButton {
+        private JGradientButton() {
+            super("Gradient Button");
+            setContentAreaFilled(false);
+            setFocusPainted(false); // used for demonstration
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            final Graphics2D g2 = (Graphics2D) g.create();
+            g2.setPaint(new GradientPaint(
+                    new Point(0, 0), 
+                    Color.WHITE, 
+                    new Point(0, getHeight()), 
+                    Color.PINK.darker()));
+            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.dispose();
+
+            super.paintComponent(g);
+        }
+
+        public static JGradientButton newInstance() {
+            return new JGradientButton();
+        }
     }
 }
