@@ -5,55 +5,46 @@ import javax.swing.border.AbstractBorder;
 import java.awt.*;
 import java.awt.event.*;
 
-public class gasStationSim extends JFrame {
-    //private variables to use in this class
-    private JPanel panel1, panel2, panel3;
+public class GasStationSim extends JFrame {
     private JTabbedPane tabbedPane;
+
+    public GasStationSim() {
+        super("GUI GSS");
+        tabbedPane = new JTabbedPane();
+
+        Tab1Panel tab1 = new Tab1Panel();
+        Tab2Panel tab2 = new Tab2Panel();
+        Tab3Panel tab3 = new Tab3Panel();
+
+        tabbedPane.addTab("Tab 1", tab1);
+        tabbedPane.addTab("Tab 2", tab2);
+        tabbedPane.addTab("Tab 3", tab3);
+
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 500);
+        getContentPane().add(tabbedPane);
+        setVisible(true);
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(GasStationSim::new);
+    }
+}
+
+
+public class Tab1Panel extends JPanel {
     private JTextArea carCountDisplay, estimatedTimeDisplay;
     private JButton carInButton, carOutButton, pump1Button, pump2Button, pump3Button, pump4Button, pump5Button, pump6Button, pump7Button, pump8Button;
     private int carCount = 0;
-    private Color[] sharedColors = {Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN};
     private JPanel[] colorPanels;
 
-    //gui main content
-    public gasStationSim() {
-        super("GUI GSS"); //name of the gui window
-        tabbedPane = new JTabbedPane(); //create tabbed pane for the main JFrame
+    public void setColorPanels(JPanel[] colorPanels) {
+        this.colorPanels = colorPanels;
+    }
 
-        panel1 = new JPanel(); //panel 1 containing the buttons
-        panel1.setLayout(new GridLayout(8, 6)); //first panel is a grid layout
-        panel1.setBackground(Color.GRAY);
-        tabbedPane.addTab("Tab 1", panel1);
-
-        panel2 = new JPanel(); //panel 2 containing the screen shown to customers for availability of pumps
-        tabbedPane.addTab("Tab 2", panel2);
-
-        panel3 = new JPanel(); //panel 3 shows the estimated time monitor
-        panel3.add(new JLabel("Estimated Waiting Time Monitor"));
-        tabbedPane.addTab("Tab 3", panel3);
-
-        class RoundedBorder extends AbstractBorder { //Display monitor customization class
-            private final Color color;
-            private final int thickness;
-            private final int radius;
-        
-            public RoundedBorder(Color color, int thickness, int radius) {
-                this.color = color;
-                this.thickness = thickness;
-                this.radius = radius;
-            }
-        
-            @Override
-            public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-                super.paintBorder(c, g, x, y, width, height);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setColor(color);
-                g2d.setStroke(new BasicStroke(thickness));
-                g2d.draw(new RoundRectangle2D.Double(x, y, width - 1, height - 1, radius, radius));
-            }
-        }
-
-        //TAB 1 CONTENT//
+    public Tab1Panel() {
+        setLayout(new GridLayout(8, 6));
+        setBackground(Color.GRAY);
 
         ButtonHandler BH = new ButtonHandler(); //button handler for normal buttons
         PumpHandler PH = new PumpHandler(); //same but for pump buttons
@@ -107,95 +98,61 @@ public class gasStationSim extends JFrame {
         pump8Button.addActionListener(PH);
 
         //seperated into rows and coloumns, adding content to the panel itself
-        panel1.add(new JLabel("")); //first row
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(estimatedTimeDisplay);
-        panel1.add(carCountDisplay);
+        this.add(new JLabel("")); //first row
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(estimatedTimeDisplay);
+        this.add(carCountDisplay);
 
-        panel1.add(carOutButton); //second row
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
+        this.add(carOutButton); //second row
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
 
-        panel1.add(new JLabel(""));//third row
-        panel1.add(new JLabel(""));
-        panel1.add(lane1);
-        panel1.add(lane2);
-        panel1.add(lane3);
-        panel1.add(lane4);
+        this.add(new JLabel(""));//third row
+        this.add(new JLabel(""));
+        this.add(lane1);
+        this.add(lane2);
+        this.add(lane3);
+        this.add(lane4);
 
-        panel1.add(new JLabel(""));//fourth row
-        panel1.add(new JLabel(""));
-        panel1.add(pump2Button);
-        panel1.add(pump4Button);
-        panel1.add(pump6Button);
-        panel1.add(pump8Button);
+        this.add(new JLabel(""));//fourth row
+        this.add(new JLabel(""));
+        this.add(pump2Button);
+        this.add(pump4Button);
+        this.add(pump6Button);
+        this.add(pump8Button);
         
-        panel1.add(new JLabel(""));//fifth row
-        panel1.add(new JLabel(""));
-        panel1.add(pump1Button);
-        panel1.add(pump3Button);
-        panel1.add(pump5Button);
-        panel1.add(pump7Button);
+        this.add(new JLabel(""));//fifth row
+        this.add(new JLabel(""));
+        this.add(pump1Button);
+        this.add(pump3Button);
+        this.add(pump5Button);
+        this.add(pump7Button);
 
-        panel1.add(new JLabel(""));//sixth row
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
+        this.add(new JLabel(""));//sixth row
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
 
-        panel1.add(carInButton); //seventh row
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
+        this.add(carInButton); //seventh row
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
 
-        panel1.add(new JLabel("")); //eighth row
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-        panel1.add(new JLabel(""));
-
-        //TAB 2 CONTENT//
-
-        panel2.setLayout(new GridLayout(2,4));
-        RoundedBorder roundedBorder = new RoundedBorder(Color.BLACK, 19, 40);
-
-        colorPanels = new JPanel[sharedColors.length];
-        Color[] colors = {Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN};
-        String[] texts = {"2", "4", "6", "8", "1", "3", "5", "7"};
-
-
-        for (int i = 0; i < colors.length; i++) {
-            JPanel colorPanel = new JPanel();
-            colorPanel.setLayout(new BorderLayout()); // Use BorderLayout for better control of label positioning
-            colorPanel.setBackground(sharedColors[i]);
-            colorPanel.setBorder(roundedBorder); // Set the custom rounded border
-        
-            JLabel label = new JLabel(texts[i]);
-            label.setForeground(Color.BLACK); // Set the text color
-            label.setHorizontalAlignment(JLabel.CENTER); // Center the text horizontally
-            label.setFont(new Font("Serif", Font.BOLD, 75));
-            colorPanel.add(label); // Add the label to the panel
-        
-            panel2.add(colorPanel);
-            colorPanels[i] = colorPanel;
-        }
-
-
-       
-
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); //exits the program when jframe is closed
-        setSize(800, 500); //default size of the window
-        getContentPane().add(tabbedPane);//adds tabbedpane to the jframe
-        setVisible(true);//sets it to visible to display
+        this.add(new JLabel("")); //eighth row
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
+        this.add(new JLabel(""));
     }
 
     class ButtonHandler implements ActionListener //button handler for buttons
@@ -220,52 +177,123 @@ public class gasStationSim extends JFrame {
         }
     }
 
-    class PumpHandler implements ActionListener//pump handler for pump buttons
-    {
-        public void actionPerformed(ActionEvent e)
-        {
-            JButton clickedPump = (JButton) e.getSource(); //gets which button was clicked
-            int pumpIndex = -1;
-            
-            if (clickedPump == pump1Button) pumpIndex = 4;
-            else if (clickedPump == pump2Button) pumpIndex = 0;
-            else if (clickedPump == pump3Button) pumpIndex = 5;
-            else if (clickedPump == pump4Button) pumpIndex = 1;
-            else if (clickedPump == pump5Button) pumpIndex = 6;
-            else if (clickedPump == pump6Button) pumpIndex = 2;
-            else if (clickedPump == pump7Button) pumpIndex = 7;
-            else if (clickedPump == pump8Button) pumpIndex = 3;
-
+    class PumpHandler implements ActionListener {
+        public void actionPerformed(ActionEvent e) {
+            JButton clickedPump = (JButton) e.getSource();
+            int pumpIndex = getPumpIndex(clickedPump);
+    
             if (pumpIndex != -1) {
                 final int finalPumpIndex = pumpIndex;
                 final JButton finalClickedPump = clickedPump;
-                // Change the color of the button and the corresponding panel
-                Color newColor = Color.RED; // The color when the button is active
+    
+                Color newColor = Color.RED;
                 finalClickedPump.setBackground(newColor);
-                colorPanels[finalPumpIndex].setBackground(newColor);
-            
-            new Thread(new Runnable() { //sleep method which doesnt stop the whole program, just the button
-                public void run() {
+    
+                // Access Swing components within the EDT
+                SwingUtilities.invokeLater(() -> {
+                    colorPanels[finalPumpIndex].setBackground(newColor);
+                });
+    
+                new Thread(() -> {
                     try {
                         Thread.sleep(2000);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
-
-                    SwingUtilities.invokeLater(new Runnable() {
-                        public void run() {
-                            finalClickedPump.setBackground(Color.GREEN); //sets it back to green
-                            colorPanels[finalPumpIndex].setBackground(Color.GREEN); 
-                            
-                        }
+    
+                    SwingUtilities.invokeLater(() -> {
+                        finalClickedPump.setBackground(Color.GREEN);
+                        colorPanels[finalPumpIndex].setBackground(Color.GREEN);
                     });
-                }
-            }).start(); 
+                }).start();
+            }
+        }
+    
+        // Helper method to get the index of the clicked pump
+        private int getPumpIndex(JButton clickedPump) {
+            if (clickedPump == pump1Button) return 4;
+            else if (clickedPump == pump2Button) return 0;
+            else if (clickedPump == pump3Button) return 5;
+            else if (clickedPump == pump4Button) return 1;
+            else if (clickedPump == pump5Button) return 6;
+            else if (clickedPump == pump6Button) return 2;
+            else if (clickedPump == pump7Button) return 7;
+            else if (clickedPump == pump8Button) return 3;
+            else return -1; // Return -1 if no pump matches
         }
     }
+
+}
+
+public class Tab2Panel extends JPanel {
+    private JPanel[] colorPanels;
+    private Color[] sharedColors = {Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN};
+    private static class RoundedBorder extends AbstractBorder { //Display monitor customization class
+            private final Color color;
+            private final int thickness;
+            private final int radius;
+        
+            public RoundedBorder(Color color, int thickness, int radius) {
+                this.color = color;
+                this.thickness = thickness;
+                this.radius = radius;
+            }
+        
+            @Override
+            public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+                super.paintBorder(c, g, x, y, width, height);
+                Graphics2D g2d = (Graphics2D) g;
+                g2d.setColor(color);
+                g2d.setStroke(new BasicStroke(thickness));
+                g2d.draw(new RoundRectangle2D.Double(x, y, width - 1, height - 1, radius, radius));
+            }
+        }
+
+
+    public Tab2Panel() {
+        this.setLayout(new GridLayout(2,4));
+        colorPanels = createColorPanels();
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new gasStationSim()); //runs the GUI
+    public JPanel[] getColorPanels() {
+        return colorPanels;
     }
+
+
+    private JPanel[] createColorPanels() {
+        JPanel[] panels = new JPanel[sharedColors.length];
+
+        for (int i = 0; i < sharedColors.length; i++) {
+            JPanel colorPanel = new JPanel();
+            colorPanel.setLayout(new BorderLayout());
+            colorPanel.setBackground(sharedColors[i]);
+            colorPanel.setBorder(new RoundedBorder(Color.BLACK, 19, 40)); // Apply rounded border directly here
+
+            JLabel label = new JLabel(getLabelText(i));
+            label.setForeground(Color.BLACK);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setFont(new Font("Serif", Font.BOLD, 75));
+
+            colorPanel.add(label);
+            panels[i] = colorPanel;
+        }
+    
+        return panels;
+    }
+    private String getLabelText(int index) {
+        String[] texts = {"2", "4", "6", "8", "1", "3", "5", "7"};
+        return texts[index];
+    }
+}
+
+
+public class Tab3Panel extends JPanel {
+    public Tab3Panel() {
+        add(new JLabel("Estimated Waiting Time Monitor"));
+
+        // Add components and setup specific to Tab 3 here...
+        // ... (Content of the third tab goes here)
+    }
+
+    // Any additional inner classes or handlers can be defined here if needed for Tab 3.
 }

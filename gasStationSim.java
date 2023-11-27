@@ -247,7 +247,7 @@ public class gasStationSim extends JFrame {
             new Thread(new Runnable() { //sleep method which doesnt stop the whole program, just the button
                 public void run() {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(10000);
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -266,6 +266,6 @@ public class gasStationSim extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new gasStationSim()); //runs the GUI
+        SwingUtilities.invokeLater(GasStationSim::new); //runs the GUI
     }
 }
