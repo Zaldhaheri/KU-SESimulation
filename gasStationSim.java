@@ -237,7 +237,6 @@ public class gasStationSim extends JFrame {
                 timeLabel.setText(formatTime(0)); //default
 
             }
-
         }
     }
 
