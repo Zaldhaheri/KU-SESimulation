@@ -10,6 +10,7 @@ public class gasStationSim extends JFrame {
     private JPanel panel1, panel2, panel3;
     private JTabbedPane tabbedPane;
     private JTextArea carCountDisplay, estimatedTimeDisplay;
+    private JLabel timeLabel;
     private JButton carInButton, carOutButton, pump1Button, pump2Button, pump3Button, pump4Button, pump5Button,
             pump6Button, pump7Button, pump8Button;
     private int carCount = 0;
@@ -17,6 +18,13 @@ public class gasStationSim extends JFrame {
             Color.GREEN, Color.GREEN };
     private JPanel[] colorPanels;
     private int activePumpCount = 0; // Track the number of active pumps
+
+    private String formatTime(double time) { //formats numbers to time formatting
+        int minutes = (int) (time * 60);
+        int hours = minutes / 60;
+        minutes %= 60;
+        return String.format("%02d:%02d MINS", hours, minutes);
+    }
 
     // gui main content
     public gasStationSim() {
@@ -192,6 +200,14 @@ public class gasStationSim extends JFrame {
             colorPanels[i] = colorPanel;
         }
 
+        // TAB 3 CONTENT //
+        panel3.setLayout(new BorderLayout()); // Set BorderLayout for better positioning
+
+        timeLabel = new JLabel(formatTime(carCount * 0.5)); // Use carCount for initial display
+        timeLabel.setFont(new Font("Serif", Font.BOLD, 120));
+        timeLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        panel3.add(timeLabel, BorderLayout.CENTER);
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // exits the program when jframe is closed
         setSize(800, 500); // default size of the window
         getContentPane().add(tabbedPane);// adds tabbedpane to the jframe
@@ -212,11 +228,15 @@ public class gasStationSim extends JFrame {
             }
             System.out.println("carCount: " + carCount);
             carCountDisplay.setText("Car Count: " + carCount); // displays the new car count
-            if ((carCount - 8) > 0) // checks if there are more than 8 cars
-                estimatedTimeDisplay.setText("EST.: " + ((carCount - 4) / 4) * 0.5 + " mins"); // for every new 4 cars
-                                                                                               // adds 30 seconds
-            else
+            if ((carCount - 8) > 0) {// checks if there are more than 8 cars
+                estimatedTimeDisplay.setText("EST.: " + ((carCount - 4) / 4) * 0.5 + " mins"); // for every new 4 cars adds 30 seconds
+                timeLabel.setText(formatTime(((carCount - 4) / 4)*0.5)); // estimated time in panel 3
+            } 
+            else {
                 estimatedTimeDisplay.setText("EST.: 0.0 mins"); // default estimated time
+                timeLabel.setText(formatTime(0)); //default
+
+            }
 
         }
     }
@@ -249,7 +269,7 @@ public class gasStationSim extends JFrame {
                     final int finalPumpIndex = pumpIndex;
                     final JButton finalClickedPump = clickedPump;
 
-                    // Change the color of the button and the corresponding panel
+                    // Change the color of the button and the corresponding panel to red
                     Color newColor = Color.RED;
                     finalClickedPump.setBackground(newColor);
                     colorPanels[finalPumpIndex].setBackground(newColor);
@@ -259,25 +279,43 @@ public class gasStationSim extends JFrame {
                     new Thread(new Runnable() {
                         public void run() {
                             try {
-                                Thread.sleep(5000);
+                                Thread.sleep(5000); // Button stays red for 5 seconds
                             } catch (InterruptedException ex) {
                                 ex.printStackTrace();
                             }
-
                             SwingUtilities.invokeLater(new Runnable() {
                                 public void run() {
-                                    finalClickedPump.setBackground(Color.GREEN);
-                                    colorPanels[finalPumpIndex].setBackground(Color.GREEN);
+                                    // Change button and panel color to yellow
+                                    finalClickedPump.setBackground(Color.YELLOW); //panel 1 color
+                                    colorPanels[finalPumpIndex].setBackground(Color.YELLOW); //panel 2 color
+                                    new Thread(new Runnable() {
+                                        public void run() {
+                                            try {
+                                                Thread.sleep(2000); //button stays yellow for 2 seconds
+                                            } catch (InterruptedException ex) {
+                                                ex.printStackTrace();
+                                            }
+                                            SwingUtilities.invokeLater(new Runnable() {
+                                                public void run() {
+                                                    // Change button and panel color back to green
+                                                    finalClickedPump.setBackground(Color.GREEN);
+                                                    colorPanels[finalPumpIndex].setBackground(Color.GREEN);
 
-                                    activePumpCount--; // Decrement active pump count
-                                    if (carCount!=0)
-                                        carCount--; // Decrement car count
-                                    carCountDisplay.setText("Car Count: " + carCount);
-                                    if ((carCount - 8) > 0) {
-                                        estimatedTimeDisplay.setText("EST.: " + ((carCount - 4) / 4) * 0.5 + " mins");
-                                    } else {
-                                        estimatedTimeDisplay.setText("EST.: 0.0 mins");
-                                    }
+                                                    activePumpCount--; // Decrement active pump count
+                                                    if (carCount != 0)
+                                                        carCount--; // Decrement car count
+                                                    carCountDisplay.setText("Car Count: " + carCount);
+                                                    if ((carCount - 8) > 0) {
+                                                        estimatedTimeDisplay.setText("EST.: " + ((carCount - 4) / 4) * 0.5 + " mins"); //estimated time in panel 1
+                                                        timeLabel.setText(formatTime(((carCount - 4) / 4)*0.5)); //estimated time in panel 3
+                                                    } else {
+                                                        estimatedTimeDisplay.setText("EST.: 0.0 mins");
+                                                        timeLabel.setText(formatTime(0));
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    }).start();
                                 }
                             });
                         }
