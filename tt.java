@@ -28,14 +28,53 @@ public class GasStationUI {
     private JTextArea carCountDisplay, estimatedTimeDisplay;
     private JLabel timeLabel;
     private JButton carInButton, carOutButton, pump1Button, pump2Button, pump3Button, pump4Button, pump5Button,
-                    pump6Button, pump7Button, pump8Button;
+            pump6Button, pump7Button, pump8Button;
     private int carCount = 0;
     private Color[] sharedColors = { Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN,
-                                    Color.GREEN, Color.GREEN };
+            Color.GREEN, Color.GREEN };
     private JPanel[] colorPanels;
     private int activePumpCount = 0;
+    private JLabel directionLabel;
+
+    class RoundedBorder extends AbstractBorder {
+        private final int arc;
+        private final Color color;
+        private final int thickness;
+
+        public RoundedBorder(Color color, int arc, int thickness) {
+            this.arc = arc;
+            this.thickness = thickness;
+            this.color = color;
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            super.paintBorder(c, g, x, y, width, height);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(color);
+            g2d.setStroke(new BasicStroke(thickness));
+            g2d.draw(new RoundRectangle2D.Double(x, y, width - 1, height - 1, arc, arc));
+        }
+    }
 
     public GasStationUI() {
+        colorPanels = new JPanel[8]; // Assuming there are 8 pumps
+        // Create and configure each panel
+        RoundedBorder roundedBorder = new RoundedBorder(Color.BLACK, 19, 40);
+        for (int i = 0; i < colorPanels.length; i++) {
+            JPanel colorPanel = new JPanel();
+            colorPanel.setLayout(new BorderLayout());
+            colorPanel.setBackground(sharedColors[i]); // Make sure sharedColors is initialized
+            colorPanel.setBorder(roundedBorder);
+
+            JLabel label = new JLabel(String.valueOf(i + 1)); // Labels from 1 to 8
+            label.setForeground(Color.BLACK);
+            label.setHorizontalAlignment(JLabel.CENTER);
+            label.setFont(new Font("Serif", Font.BOLD, 75));
+            colorPanel.add(label);
+
+            colorPanels[i] = colorPanel;
+        }
         initializeUI();
     }
 
@@ -160,30 +199,36 @@ public class GasStationUI {
         panel1.add(new JLabel(""));
         panel1.add(new JLabel(""));
         panel1.add(new JLabel(""));
-    
-        panel2.setLayout(new GridLayout(2, 4));
-        RoundedBorder roundedBorder = new RoundedBorder(Color.BLACK, 19, 40);
-    
-        colorPanels = new JPanel[sharedColors.length];
-        Color[] colors = { Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN, Color.GREEN,
-                Color.GREEN };
-        String[] texts = { "2", "4", "6", "8", "1", "3", "5", "7" };
-    
-        for (int i = 0; i < colors.length; i++) {
-            JPanel colorPanel = new JPanel();
-            colorPanel.setLayout(new BorderLayout());
-            colorPanel.setBackground(sharedColors[i]);
-            colorPanel.setBorder(roundedBorder);
-    
-            JLabel label = new JLabel(texts[i]);
-            label.setForeground(Color.BLACK);
-            label.setHorizontalAlignment(JLabel.CENTER);
-            label.setFont(new Font("Serif", Font.BOLD, 75));
-            colorPanel.add(label);
-    
-            panel2.add(colorPanel);
-            colorPanels[i] = colorPanel;
+
+        // Set panel2 to use GridBagLayout
+        panel2.setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        // Common settings for all grid bag constraints
+        gbc.fill = GridBagConstraints.BOTH;
+        gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
+
+        // Define the order of pumps in a 2D array (2 rows, 4 columns)
+        int[][] pumpOrder = { { 1, 3, 5, 7 }, { 0, 2, 4, 6 } };
+
+        // Add the panels to the grid
+        for (int row = 0; row < pumpOrder.length; row++) {
+            for (int col = 0; col < pumpOrder[row].length; col++) {
+                gbc.gridx = col;
+                gbc.gridy = row;
+                panel2.add(colorPanels[pumpOrder[row][col]], gbc);
+            }
         }
+
+        // Add the direction label at the bottom
+        gbc.gridx = 0; // Starting column
+        gbc.gridy = 2; // Third row
+        gbc.gridwidth = 4; // Span across all columns
+        gbc.weighty = 0; // Less vertical weight for the label
+        directionLabel = new JLabel("Drive to the lane 4)", SwingConstants.CENTER);
+        directionLabel.setFont(new Font("Serif", Font.BOLD, 16));
+        panel2.add(directionLabel, gbc);
 
         timeLabel = new JLabel(formatTime(carCount * 0.5));
         timeLabel.setFont(new Font("Serif", Font.BOLD, 120));
@@ -191,28 +236,39 @@ public class GasStationUI {
         panel3.add(timeLabel, BorderLayout.CENTER);
     }
 
-    public JButton getPump1Button(){
+    public JLabel getDirectionLabel() {
+        return directionLabel;
+    }
+
+    public JButton getPump1Button() {
         return pump1Button;
     }
-    public JButton getPump2Button(){
+
+    public JButton getPump2Button() {
         return pump2Button;
     }
-    public JButton getPump3Button(){
+
+    public JButton getPump3Button() {
         return pump3Button;
     }
-    public JButton getPump4Button(){
+
+    public JButton getPump4Button() {
         return pump4Button;
     }
-    public JButton getPump5Button(){
+
+    public JButton getPump5Button() {
         return pump5Button;
     }
-    public JButton getPump6Button(){
+
+    public JButton getPump6Button() {
         return pump6Button;
     }
-    public JButton getPump7Button(){
+
+    public JButton getPump7Button() {
         return pump7Button;
     }
-    public JButton getPump8Button(){
+
+    public JButton getPump8Button() {
         return pump8Button;
     }
 
@@ -310,21 +366,21 @@ public class PumpHandler implements ActionListener {
         int pumpIndex = -1;
 
         if (clickedPump == ui.getPump1Button())
-            pumpIndex = 4;
-        else if (clickedPump == ui.getPump2Button())
             pumpIndex = 0;
-        else if (clickedPump == ui.getPump3Button())
-            pumpIndex = 5;
-        else if (clickedPump == ui.getPump4Button())
+        else if (clickedPump == ui.getPump2Button())
             pumpIndex = 1;
-        else if (clickedPump == ui.getPump5Button())
-            pumpIndex = 6;
-        else if (clickedPump == ui.getPump6Button())
+        else if (clickedPump == ui.getPump3Button())
             pumpIndex = 2;
-        else if (clickedPump == ui.getPump7Button())
-            pumpIndex = 7;
-        else if (clickedPump == ui.getPump8Button())
+        else if (clickedPump == ui.getPump4Button())
             pumpIndex = 3;
+        else if (clickedPump == ui.getPump5Button())
+            pumpIndex = 4;
+        else if (clickedPump == ui.getPump6Button())
+            pumpIndex = 5;
+        else if (clickedPump == ui.getPump7Button())
+            pumpIndex = 6;
+        else if (clickedPump == ui.getPump8Button())
+            pumpIndex = 7;
 
         if (pumpIndex != -1) {
             if (ui.getActivePumpCount() < ui.getCarCount()) {
@@ -339,7 +395,7 @@ public class PumpHandler implements ActionListener {
 
                 new Thread(() -> {
                     try {
-                        Thread.sleep(5000); // Button stays red for 5 seconds
+                        Thread.sleep(15000); // Button stays red for 5 seconds
                     } catch (InterruptedException ex) {
                         ex.printStackTrace();
                     }
@@ -364,7 +420,8 @@ public class PumpHandler implements ActionListener {
 
                                 ui.getCarCountDisplay().setText("Car Count: " + ui.getCarCount());
                                 if ((ui.getCarCount() - 8) > 0) {
-                                    ui.getEstimatedTimeDisplay().setText("EST.: " + ((ui.getCarCount() - 4) / 4) * 0.5 + " mins");
+                                    ui.getEstimatedTimeDisplay()
+                                            .setText("EST.: " + ((ui.getCarCount() - 4) / 4) * 0.5 + " mins");
                                     ui.getTimeLabel().setText(ui.formatTime(((ui.getCarCount() - 4) / 4) * 0.5));
                                 } else {
                                     ui.getEstimatedTimeDisplay().setText("EST.: 0.0 mins");
@@ -375,39 +432,69 @@ public class PumpHandler implements ActionListener {
                     });
                 }).start();
             }
+            updateDirectionLabel();
         }
     }
-}
 
+    private void updateDirectionLabel() {
+    // Check pumps in each lane and update the direction accordingly
 
-public class TimeFormatter {
-    public static String formatTime(double time) {
-        int minutes = (int) (time * 60);
-        int hours = minutes / 60;
-        minutes %= 60;
-        return String.format("%02d:%02d MINS", hours, minutes);
+    if (!isPumpBusy(7) && !isPumpBusy(6)) { // Check Lane 4 (Pumps 8 and 7)
+        ui.getDirectionLabel().setText("Drive to Lane 4"); // Lane 4 is available
+    } else if (!isPumpBusy(5) && !isPumpBusy(4)) { // Check Lane 3 (Pumps 6 and 5)
+        ui.getDirectionLabel().setText("Drive to Lane 3"); // Lane 3 is available
+    } else if (!isPumpBusy(3) && !isPumpBusy(2)) { // Check Lane 2 (Pumps 4 and 3)
+        ui.getDirectionLabel().setText("Drive to Lane 2"); // Lane 2 is available
+    } else if (!isPumpBusy(1) && !isPumpBusy(0)) { // Check Lane 1 (Pumps 2 and 1)
+        ui.getDirectionLabel().setText("Drive to Lane 1"); // Lane 1 is available
+    } else if (!isPumpBusy(7) || !isPumpBusy(6)) { // Lane 4 has at least one available pump
+        ui.getDirectionLabel().setText("Drive to Lane 4"); // Lane 4 is available with at least one pump free
+    } else if (!isPumpBusy(5) || !isPumpBusy(4)) { // Lane 3 has at least one available pump
+        ui.getDirectionLabel().setText("Drive to Lane 3"); // Lane 3 is available with at least one pump free
+    } else if (!isPumpBusy(3) || !isPumpBusy(2)) { // Lane 2 has at least one available pump
+        ui.getDirectionLabel().setText("Drive to Lane 2"); // Lane 2 is available with at least one pump free
+    } else if (!isPumpBusy(1) || !isPumpBusy(0)) { // Lane 1 has at least one available pump
+        ui.getDirectionLabel().setText("Drive to Lane 1"); // Lane 1 is available with at least one pump free
+    } else {
+        ui.getDirectionLabel().setText("Drive to Lane 4"); // All lanes have both pumps busy, loop back to Lane 4
     }
 }
 
-class RoundedBorder extends AbstractBorder {
-    private final int arc;
-    private final Color color;
-    private final int thickness;
+private boolean isPumpBusy(int pumpIndex) {
+    return ui.getColorPanels()[pumpIndex].getBackground() == Color.RED;
+}
 
-    public RoundedBorder(Color color, int arc, int thickness) {
-        this.arc = arc;
-        this.thickness = thickness;
-        this.color = color;
-        // Implementation of RoundedBorder - you might need to customize this based on your requirements.
+
+    public class TimeFormatter {
+        public static String formatTime(double time) {
+            int minutes = (int) (time * 60);
+            int hours = minutes / 60;
+            minutes %= 60;
+            return String.format("%02d:%02d MINS", hours, minutes);
+        }
     }
 
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        super.paintBorder(c, g, x, y, width, height);
-        Graphics2D g2d = (Graphics2D) g;
-        g2d.setColor(color);
-        g2d.setStroke(new BasicStroke(thickness));
-        g2d.draw(new RoundRectangle2D.Double(x, y, width - 1, height - 1, arc, arc));
+    class RoundedBorder extends AbstractBorder {
+        private final int arc;
+        private final Color color;
+        private final int thickness;
+
+        public RoundedBorder(Color color, int arc, int thickness) {
+            this.arc = arc;
+            this.thickness = thickness;
+            this.color = color;
+            // Implementation of RoundedBorder - you might need to customize this based on
+            // your requirements.
+        }
+
+        @Override
+        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+            super.paintBorder(c, g, x, y, width, height);
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setColor(color);
+            g2d.setStroke(new BasicStroke(thickness));
+            g2d.draw(new RoundRectangle2D.Double(x, y, width - 1, height - 1, arc, arc));
+        }
+        // Override necessary methods from AbstractBorder.
     }
-    // Override necessary methods from AbstractBorder.
 }
